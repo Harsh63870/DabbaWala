@@ -1,0 +1,111 @@
+{
+  "timestamp": "2026-10-17T06:52:26.259797",
+  "dataset_rows": 5000,
+  "test_rows": 1000,
+  "full_dataset": {
+    "TabPFN": {
+      "mae": 3.601,
+      "rmse": 6.046,
+      "r2": 0.9368,
+      "fit_time_sec": 0.3939,
+      "predict_time_sec": 0.004,
+      "sample_size": 4000
+    },
+    "XGBoost": {
+      "mae": 3.312,
+      "rmse": 5.225,
+      "r2": 0.9528,
+      "fit_time_sec": 0.1129,
+      "predict_time_sec": 0.006,
+      "sample_size": 4000
+    },
+    "LinearRegression": {
+      "mae": 6.269,
+      "rmse": 10.152,
+      "r2": 0.8217,
+      "fit_time_sec": 0.003,
+      "predict_time_sec": 0.0,
+      "sample_size": 4000
+    }
+  },
+  "small_data_experiments": {
+    "n_50": {
+      "TabPFN": {
+        "mae": 11.557,
+        "rmse": 18.18,
+        "r2": 0.4283,
+        "fit_time_sec": 0.0487,
+        "predict_time_sec": 0.0,
+        "sample_size": 50
+      },
+      "XGBoost": {
+        "mae": 10.203,
+        "rmse": 16.676,
+        "r2": 0.519,
+        "fit_time_sec": 0.0834,
+        "predict_time_sec": 0.0,
+        "sample_size": 50
+      },
+      "LinearRegression": {
+        "mae": 6.812,
+        "rmse": 12.205,
+        "r2": 0.7423,
+        "fit_time_sec": 0.0,
+        "predict_time_sec": 0.0161,
+        "sample_size": 50
+      }
+    },
+    "n_100": {
+      "TabPFN": {
+        "mae": 9.757,
+        "rmse": 16.933,
+        "r2": 0.5041,
+        "fit_time_sec": 0.0315,
+        "predict_time_sec": 0.0161,
+        "sample_size": 100
+      },
+      "XGBoost": {
+        "mae": 8.652,
+        "rmse": 15.677,
+        "r2": 0.5749,
+        "fit_time_sec": 0.0793,
+        "predict_time_sec": 0.0027,
+        "sample_size": 100
+      },
+      "LinearRegression": {
+        "mae": 5.97,
+        "rmse": 11.363,
+        "r2": 0.7767,
+        "fit_time_sec": 0.0,
+        "predict_time_sec": 0.0157,
+        "sample_size": 100
+      }
+    },
+    "n_200": {
+      "TabPFN": {
+        "mae": 8.327,
+        "rmse": 15.111,
+        "r2": 0.605,
+        "fit_time_sec": 0.0525,
+        "predict_time_sec": 0.0,
+        "sample_size": 200
+      },
+      "XGBoost": {
+        "mae": 7.083,
+        "rmse": 12.198,
+        "r2": 0.7427,
+        "fit_time_sec": 0.0973,
+        "predict_time_sec": 0.0,
+        "sample_size": 200
+      },
+      "LinearRegression": {
+        "mae": 7.227,
+        "rmse": 10.681,
+        "r2": 0.8027,
+        "fit_time_sec": 0.0,
+        "predict_time_sec": 0.016,
+        "sample_size": 200
+      }
+    }
+  }
+}

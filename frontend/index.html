@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DabbaETA — Local-First AI Dispatch & Delivery Prediction</title>
+  <meta name="description" content="Local-first delivery-time prediction & dispatch assistant for small tiffin services, bakeries, and local couriers powered by TabPFN and Gemma." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-base: #070a13;
+      --bg-surface: rgba(15, 23, 42, 0.75);
+      --bg-surface-elevated: rgba(30, 41, 59, 0.7);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(56, 189, 248, 0.5);
+      --primary: #f59e0b;
+      --primary-glow: rgba(245, 158, 11, 0.25);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-purple: #818cf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 10% 20%, #0d1527 0%, var(--bg-base) 90%);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, .brand-title {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      background: rgba(7, 10, 19, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 12px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    .brand-info h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-tagline {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+    }
+
+    .pill-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill-badge.privacy {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-subtle);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-amber {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Main Container & Tabs */
+    main {
+      flex: 1;
+      max-width: 1380px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 32px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .tabs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition-smooth);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-btn.active {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glass Cards */
+    .glass-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-glass);
+      padding: 20px;
+    }
+
+    /* Metric Bar */
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .metric-val {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-main);
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .risk-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .risk-high {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .risk-mod {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .risk-low {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .eta-highlight {
+      font-weight: 700;
+      font-size: 14px;
+      color: #38bdf8;
+    }
+
+    /* Chat Tab */
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      height: 650px;
+    }
+
+    @media (max-width: 900px) {
+      .chat-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+    }
+
+    .chat-box {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: rgba(10, 15, 28, 0.6);
+    }
+
+    .chat-bubble {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .bubble-assistant {
+      align-self: flex-start;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid var(--border-subtle);
+      color: #f1f5f9;
+      border-bottom-left-radius: 2px;
+    }
+
+    .bubble-user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      border-bottom-right-radius: 2px;
+    }
+
+    .tool-badge-card {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.25);
+      border-left: 3px solid #38bdf8;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 11.5px;
+      color: #bae6fd;
+    }
+
+    .chat-input-bar {
+      padding: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #ffffff;
+      padding: 10px 14px;
+      font-size: 13.5px;
+      outline: none;
+    }
+    .chat-input:focus {
+      border-color: var(--border-focus);
+    }
+
+    .suggestions-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chip-btn {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+    .chip-btn:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+    }
+
+    /* Benchmark Tab */
+    .benchmark-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 960px) {
+      .benchmark-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .benchmark-img {
+      width: 100%;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: #0f172a;
+    }
+
+    /* Dispatch Workflow Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .step-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .step-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .step-node.done .step-circle {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #10b981;
+    }
+
+    .step-node.active .step-circle {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+
+    .draft-card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .draft-text {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: var(--transition-smooth);
+      pointer-events: none;
+      z-index: 300;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-section">
+      <div class="brand-logo">🍱</div>
+      <div class="brand-info">
+        <h1>DabbaETA <span class="pill-badge">⚡ Side Hustle AI</span></h1>
+        <div class="brand-tagline">Local-First Tiffin & Bakery Delivery Dispatch Assistant</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="pill-badge privacy">🔒 100% Local Customer Privacy</span>
+      <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="handleCsvUpload(event)" />
+      <button class="btn btn-secondary" onclick="document.getElementById('csvFileInput').click()">
+        📁 Upload CSV
+      </button>
+      <button class="btn btn-primary" onclick="triggerDispatchWorkflow()">
+        ⚡ Run Dispatch Workflow
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div class="tabs-header">
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('ordersTab', this)">
+          📋 Orders & Risk Queue
+        </button>
+        <button class="tab-btn" onclick="switchTab('chatTab', this)">
+          💬 Dispatch Chat (Gemma)
+        </button>
+        <button class="tab-btn" onclick="switchTab('benchmarkTab', this)">
+          📊 Benchmark & Science
+        </button>
+      </div>
+
+      <div id="modelSelectContainer" style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 12px; color: var(--text-muted);">Predictor:</span>
+        <select id="modelSelect" style="background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-subtle); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; outline: none;" onchange="loadOrders()">
+          <option value="tabpfn">TabPFN (Prior-Fitted Network)</option>
+          <option value="xgboost">XGBoost Regressor</option>
+          <option value="linear_regression">Linear Regression Baseline</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- TAB 1: ORDERS -->
+    <section id="ordersTab" class="tab-content active">
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="metric-label">Active Orders <span>📦</span></div>
+          <div class="metric-val" id="metricTotalOrders">--</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">At Risk of Delay <span>⚠️</span></div>
+          <div class="metric-val" id="metricRiskyOrders" style="color: #fda4af;">--</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Average Transit ETA <span>⏱️</span></div>
+          <div class="metric-val" id="metricAvgEta">-- min</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">On-Time Performance <span>🎯</span></div>
+          <div class="metric-val" id="metricOnTimeRate" style="color: #6ee7b7;">--%</div>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 700;">Live Dispatch Queue</h3>
+            <p style="font-size: 12px; color: var(--text-muted);">Real-time TabPFN regression & Bayesian late breach probability</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="orderSearch" placeholder="Search customer, ID, location..." style="background: rgba(15,23,42,0.6); border: 1px solid var(--border-subtle); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; width: 220px;" oninput="filterOrders()" />
+            <button class="btn btn-secondary" style="padding: 6px 12px;" onclick="loadOrders()">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table id="ordersTable">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer & Drop Location</th>
+                <th>Distance & Rider</th>
+                <th>Weather & Traffic</th>
+                <th>Kitchen Prep</th>
+                <th>Promised</th>
+                <th>TabPFN ETA</th>
+                <th>Delay Risk</th>
+                <th>Quick Action</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr><td colspan="9" style="text-align: center; padding: 30px; color: var(--text-muted);">Loading active orders...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: CHAT (GEMMA) -->
+    <section id="chatTab" class="tab-content">
+      <div class="chat-layout">
+        <div class="glass-card chat-box">
+          <div style="padding: 14px 20px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 20px;">🤖</span>
+              <div>
+                <h4 style="font-size: 14px; font-weight: 700;">Gemma Dispatch Assistant</h4>
+                <div style="font-size: 11px; color: var(--accent-emerald);">Ollama: gemma3:4b active • Tool Routing Enabled</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="clearChat()">Clear History</button>
+          </div>
+
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-bubble bubble-assistant">
+              Namaste! 🙏 I am your <strong>DabbaETA Dispatch Assistant</strong>.
+              Ask me about late tiffins, ETAs, or ask me to draft polite WhatsApp delay messages in Hinglish, Hindi, or English!
+            </div>
+          </div>
+
+          <div class="chat-input-bar">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Type a message (e.g., 'Aaj kaunsi orders late hongi?')..." onkeypress="if(event.key==='Enter') sendChatMessage()" />
+            <button class="btn btn-primary" onclick="sendChatMessage()">Send 🚀</button>
+          </div>
+        </div>
+
+        <div class="suggestions-panel">
+          <div class="glass-card">
+            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--accent-cyan);">⚡ Quick Dispatch Queries</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="chip-btn" onclick="submitQuickQuery('Aaj kaunsi orders late hongi?')">
+                ⚠️ "Aaj kaunsi orders late hongi?"
+              </button>
+              <button class="chip-btn" onclick="submitQuickQuery('What is the ETA for 7.5 km in heavy traffic?')">
+                ⏱️ "What is the ETA for 7.5 km in heavy traffic?"
+              </button>
+              <button class="chip-btn" onclick="submitQuickQuery('Draft a polite WhatsApp delay apology for Priya in Hinglish')">
+                💬 "Draft WhatsApp apology for Priya in Hinglish"
+              </button>
+              <button class="chip-btn" onclick="submitQuickQuery('Draft a Hindi delay notification for Aarav')">
+                🇮🇳 "Draft a Hindi delay notification for Aarav"
+              </button>
+            </div>
+          </div>
+
+          <div class="glass-card" style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #ffffff;">🔒 Local Privacy Guarantee</h4>
+            Customer names, addresses, and phone numbers remain strictly stored on your laptop. Only anonymized tabular numbers ever reach the ML engine!
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: BENCHMARK -->
+    <section id="benchmarkTab" class="tab-content">
+      <div class="glass-card" style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700;">Model Benchmarks & TabPFN Science</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Comparing TabPFN vs XGBoost vs Linear Regression on Full 80/20 and Small-Data Regimes (50, 100, 200 rows)</p>
+          </div>
+          <button class="btn btn-secondary" onclick="refreshBenchmark()">
+            ⚡ Re-run Benchmark
+          </button>
+        </div>
+      </div>
+
+      <div class="benchmark-grid">
+        <div class="glass-card">
+          <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--accent-cyan);">Evaluation Metrics</h4>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>MAE (min)</th>
+                  <th>RMSE</th>
+                  <th>R² Score</th>
+                  <th>Fit Latency</th>
+                </tr>
+              </thead>
+              <tbody id="benchmarkTableBody">
+                <tr><td colspan="5" style="text-align: center;">Loading benchmark metrics...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top: 16px; padding: 12px; background: rgba(30, 41, 59, 0.5); border-radius: var(--radius-sm); font-size: 12px; line-height: 1.5; color: #cbd5e1;">
+            <strong style="color: #38bdf8;">Why TabPFN on Small Data?</strong><br />
+            Standard Gradient Boosting models (like XGBoost) require hundreds of samples to generalize non-linear traffic and weather patterns. TabPFN incorporates synthetic prior reasoning, yielding superior zero-shot and small-sample accuracy for home bakeries and tiffins that have only 50–200 historical orders!
+          </div>
+        </div>
+
+        <div class="glass-card" style="display: flex; flex-direction: column; align-items: center;">
+          <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--accent-cyan); align-self: flex-start;">Visual Accuracy Comparison</h4>
+          <img src="/docs/benchmark.png" alt="DabbaETA Benchmark Chart" class="benchmark-img" id="benchmarkImg" onerror="this.alt='Chart not generated yet. Click Re-run Benchmark above.'" />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- DISPATCH WORKFLOW MODAL -->
+  <div class="modal-backdrop" id="dispatchModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size: 16px; font-weight: 700;">Temporal Dispatch Orchestrator</h3>
+          <p style="font-size: 11px; color: var(--text-muted);" id="dispatchWorkflowId">Workflow ID: --</p>
+        </div>
+        <button class="btn btn-secondary" style="padding: 4px 10px;" onclick="closeDispatchModal()">✕ Close</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="stepper">
+          <div class="step-node" id="stepLoad">
+            <div class="step-circle">1</div>
+            <span>load_orders</span>
+          </div>
+          <div class="step-node" id="stepPredict">
+            <div class="step-circle">2</div>
+            <span>predict_all (TabPFN)</span>
+          </div>
+          <div class="step-node" id="stepFlag">
+            <div class="step-circle">3</div>
+            <span>flag_risky</span>
+          </div>
+          <div class="step-node" id="stepExplain">
+            <div class="step-circle">4</div>
+            <span>explain (Gemma)</span>
+          </div>
+          <div class="step-node" id="stepDraft">
+            <div class="step-circle">5</div>
+            <span>draft_messages</span>
+          </div>
+        </div>
+
+        <div id="dispatchExplanationCard" style="display: none; padding: 14px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; font-size: 12.5px; color: #bae6fd;">
+          <strong>🧠 Logistics Bottleneck Analysis:</strong>
+          <p id="dispatchExplanationText" style="margin-top: 4px;"></p>
+        </div>
+
+        <div id="dispatchDraftsContainer" style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Dynamically filled with WhatsApp drafted cards -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toastMessage">Copied to clipboard!</div>
+
+  <!-- Client Script -->
+  <script>
+    let currentOrders = [];
+
+    function showToast(text) {
+      const toast = document.getElementById('toastMessage');
+      toast.innerText = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+
+      if (tabId === 'benchmarkTab') {
+        loadBenchmark();
+      }
+    }
+
+    async function loadOrders() {
+      const model = document.getElementById('modelSelect').value;
+      try {
+        const res = await fetch(`/orders?model=${model}&limit=50`);
+        const data = await res.json();
+        currentOrders = data;
+        renderOrdersTable(data);
+        updateMetrics(data);
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+      }
+    }
+
+    function updateMetrics(orders) {
+      const total = orders.length;
+      const risky = orders.filter(o => o.is_late_predicted).length;
+      const avgEta = total > 0 ? (orders.reduce((acc, o) => acc + o.eta_minutes, 0) / total).toFixed(1) : 0;
+      const onTimeRate = total > 0 ? Math.round(((total - risky) / total) * 100) : 100;
+
+      document.getElementById('metricTotalOrders').innerText = total;
+      document.getElementById('metricRiskyOrders').innerText = risky;
+      document.getElementById('metricAvgEta').innerText = `${avgEta} min`;
+      document.getElementById('metricOnTimeRate').innerText = `${onTimeRate}%`;
+    }
+
+    function renderOrdersTable(orders) {
+      const tbody = document.getElementById('ordersTableBody');
+      if (!orders || orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 30px; color: var(--text-muted);">No orders found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = orders.map(o => {
+        let badgeClass = 'risk-low';
+        if (o.risk_badge === 'HIGH') badgeClass = 'risk-high';
+        else if (o.risk_badge === 'MODERATE') badgeClass = 'risk-mod';
+
+        return `
+          <tr>
+            <td><strong style="color: #ffffff;">${o.Order_ID}</strong></td>
+            <td>
+              <div>${o.Customer_Name}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${o.Delivery_Location}</div>
+            </td>
+            <td>
+              <div>${o.Distance_km} km</div>
+              <div style="font-size: 11px; color: var(--text-dim);">${o.Vehicle_Type} • ${o.Courier_Experience_yrs}y exp</div>
+            </td>
+            <td>
+              <div>${o.Weather}</div>
+              <div style="font-size: 11px; color: var(--text-dim);">${o.Traffic_Level} Traffic</div>
+            </td>
+            <td>${o.Preparation_Time_min} min</td>
+            <td>${o.promised_time_min} min</td>
+            <td class="eta-highlight">${o.eta_minutes} min</td>
+            <td>
+              <span class="risk-tag ${badgeClass}">
+                ${o.risk_badge} (${Math.round(o.late_risk_probability * 100)}%)
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="draftForOrder('${o.Order_ID}')">
+                💬 WhatsApp
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterOrders() {
+      const q = document.getElementById('orderSearch').value.toLowerCase();
+      const filtered = currentOrders.filter(o =>
+        o.Order_ID.toLowerCase().includes(q) ||
+        o.Customer_Name.toLowerCase().includes(q) ||
+        o.Delivery_Location.toLowerCase().includes(q)
+      );
+      renderOrdersTable(filtered);
+    }
+
+    async function handleCsvUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(`✅ ${data.message}`);
+          loadOrders();
+        } else {
+          showToast(`❌ Error: ${data.detail}`);
+        }
+      } catch (e) {
+        showToast(`❌ Upload failed: ${e}`);
+      }
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      appendChatBubble(text, 'user');
+
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+        const data = await res.json();
+        appendChatBubble(data.reply, 'assistant', data.tool_called, data.tool_args);
+      } catch (err) {
+        appendChatBubble(`Error contacting dispatch assistant: ${err}`, 'assistant');
+      }
+    }
+
+    function submitQuickQuery(query) {
+      document.getElementById('chatInput').value = query;
+      sendChatMessage();
+    }
+
+    function appendChatBubble(text, role, toolCalled = null, toolArgs = null) {
+      const container = document.getElementById('chatMessages');
+      const bubble = document.createElement('div');
+      bubble.className = `chat-bubble bubble-${role}`;
+
+      let html = text.replace(/\n/g, '<br/>');
+      if (toolCalled) {
+        html += `
+          <div class="tool-badge-card">
+            ⚡ Executed Tool: <strong>${toolCalled}</strong>
+            ${toolArgs ? `<br/>Args: ${JSON.stringify(toolArgs)}` : ''}
+          </div>
+        `;
+      }
+      bubble.innerHTML = html;
+      container.appendChild(bubble);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function clearChat() {
+      document.getElementById('chatMessages').innerHTML = `
+        <div class="chat-bubble bubble-assistant">
+          Chat cleared. Ask me any delivery dispatch question!
+        </div>
+      `;
+    }
+
+    async function loadBenchmark() {
+      try {
+        const res = await fetch('/benchmark');
+        const data = await res.json();
+        renderBenchmarkTable(data);
+        document.getElementById('benchmarkImg').src = `/docs/benchmark.png?t=${Date.now()}`;
+      } catch (e) {
+        console.error('Benchmark fetch failed:', e);
+      }
+    }
+
+    async function refreshBenchmark() {
+      showToast('⏳ Training and benchmarking models...');
+      try {
+        const res = await fetch('/benchmark?refresh=true');
+        const data = await res.json();
+        renderBenchmarkTable(data);
+        document.getElementById('benchmarkImg').src = `/docs/benchmark.png?t=${Date.now()}`;
+        showToast('✅ Benchmark refreshed successfully!');
+      } catch (e) {
+        showToast(`❌ Benchmark failed: ${e}`);
+      }
+    }
+
+    function renderBenchmarkTable(data) {
+      const tbody = document.getElementById('benchmarkTableBody');
+      const full = data.full_dataset || {};
+      const rows = Object.entries(full).map(([name, m]) => `
+        <tr>
+          <td><strong style="color: ${name==='TabPFN' ? '#38bdf8' : '#ffffff'};">${name}</strong></td>
+          <td>${m.mae.toFixed(2)} min</td>
+          <td>${m.rmse.toFixed(2)}</td>
+          <td>${m.r2.toFixed(3)}</td>
+          <td>${m.fit_time_sec.toFixed(3)}s</td>
+        </tr>
+      `).join('');
+      tbody.innerHTML = rows;
+    }
+
+    // Temporal Dispatch Modal Flow
+    async function triggerDispatchWorkflow() {
+      const modal = document.getElementById('dispatchModal');
+      modal.classList.add('open');
+      setStepActive('stepLoad');
+      document.getElementById('dispatchExplanationCard').style.display = 'none';
+      document.getElementById('dispatchDraftsContainer').innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted);">Initiating Temporal dispatch activities...</p>';
+
+      try {
+        const res = await fetch('/run-dispatch', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ late_threshold_probability: 0.40 })
+        });
+        const data = await res.json();
+        document.getElementById('dispatchWorkflowId').innerText = `Workflow ID: ${data.workflow_id}`;
+        pollDispatchWorkflow(data.workflow_id);
+      } catch (err) {
+        showToast(`❌ Failed to start dispatch: ${err}`);
+      }
+    }
+
+    async function pollDispatchWorkflow(jobId) {
+      let attempts = 0;
+      const interval = setInterval(async () => {
+        attempts++;
+        try {
+          const res = await fetch(`/run-dispatch/${jobId}`);
+          const job = await res.json();
+
+          if (attempts === 1) setStepActive('stepPredict');
+          if (attempts === 2) setStepActive('stepFlag');
+          if (attempts === 3) setStepActive('stepExplain');
+
+          if (job.status === 'COMPLETED') {
+            clearInterval(interval);
+            setAllStepsDone();
+            renderDispatchResults(job);
+            showToast('✅ Dispatch workflow completed!');
+          } else if (job.status === 'FAILED') {
+            clearInterval(interval);
+            document.getElementById('dispatchDraftsContainer').innerHTML = `<p style="color:#f43f5e; padding:20px;">Workflow error: ${job.error}</p>`;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+
+        if (attempts > 30) clearInterval(interval);
+      }, 1000);
+    }
+
+    function setStepActive(stepId) {
+      ['stepLoad', 'stepPredict', 'stepFlag', 'stepExplain', 'stepDraft'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('active');
+      });
+      document.getElementById(stepId).classList.add('active');
+    }
+
+    function setAllStepsDone() {
+      ['stepLoad', 'stepPredict', 'stepFlag', 'stepExplain', 'stepDraft'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('active');
+        el.classList.add('done');
+      });
+    }
+
+    function renderDispatchResults(job) {
+      const container = document.getElementById('dispatchDraftsContainer');
+      const drafts = job.draft_messages || [];
+
+      if (job.explanation && job.explanation.summary) {
+        document.getElementById('dispatchExplanationCard').style.display = 'block';
+        document.getElementById('dispatchExplanationText').innerText = job.explanation.summary;
+      }
+
+      if (drafts.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 20px; color: var(--accent-emerald);">
+            🎉 Zero late orders detected! All shipments are progressing on schedule.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <h4 style="font-size: 14px; font-weight: 700; color: #ffffff;">
+          ⚠️ ${drafts.length} WhatsApp Delay Messages Ready to Dispatch:
+        </h4>
+      ` + drafts.map(d => `
+        <div class="draft-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>${d.customer_name}</strong> (${d.order_id})
+              <span style="font-size: 11px; color: #fda4af; margin-left: 6px;">~${Math.round(d.delay_minutes || 15)}m delay</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="copyDraftText(this, \`${escapeJs(d.message_text)}\`)">
+                📋 Copy
+              </button>
+              <a href="https://wa.me/?text=${encodeURIComponent(d.message_text)}" target="_blank" class="btn btn-primary" style="padding: 4px 10px; font-size: 11px; text-decoration: none;">
+                📲 Open WhatsApp
+              </a>
+            </div>
+          </div>
+          <div class="draft-text">${d.message_text}</div>
+        </div>
+      `).join('');
+    }
+
+    function escapeJs(str) {
+      return (str || '').replace(/`/g, '\\`').replace(/\\/g, '\\\\').replace(/\$/g, '\\$');
+    }
+
+    function copyDraftText(btn, text) {
+      navigator.clipboard.writeText(text);
+      showToast('📋 Message copied to clipboard!');
+      const orig = btn.innerText;
+      btn.innerText = '✅ Copied!';
+      setTimeout(() => btn.innerText = orig, 2000);
+    }
+
+    function draftForOrder(orderId) {
+      switchTab('chatTab', document.querySelectorAll('.tab-btn')[1]);
+      submitQuickQuery(`Draft a polite WhatsApp delay apology for order ${orderId} in Hinglish`);
+    }
+
+    function closeDispatchModal() {
+      document.getElementById('dispatchModal').classList.remove('open');
+    }
+
+    // Initial load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadOrders();
+    });
+  </script>
+</body>
+</html>

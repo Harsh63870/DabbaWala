@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  temporal:
+    image: temporalio/admin-tools:latest
+    container_name: dabbaeta-temporal
+    ports:
+      - "7233:7233"
+      - "8233:8233"
+    environment:
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    entrypoint: ["temporal", "server", "start-dev", "--ip", "0.0.0.0"]
+
+  dabbaeta:
+    build: .
+    container_name: dabbaeta-app
+    ports:
+      - "8000:8000"
+    environment:
+      - TEMPORAL_HOST=temporal:7233
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - OLLAMA_MODEL=gemma3:4b
+      - TABPFN_API_KEY=${TABPFN_API_KEY:-}
+      - SENTRY_DSN=${SENTRY_DSN:-}
+    depends_on:
+      - temporal
